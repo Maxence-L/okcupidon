@@ -14,25 +14,10 @@ create_database_script = """CREATE TABLE IF NOT EXISTS profile_id (
                                     category varchar(30),
                                     title varchar(200),
                                     content varchar(7999)
-                                );
-                            
-                                CREATE TABLE IF NOT EXISTS profile_question (
-                                    id bigserial,
-                                    ok_id varchar(50),
-                                    question_text varchar(200),
-                                    answer varchar(100),
-                                    answer_position varchar(10)
-                                );
-                                    
-                                CREATE TABLE IF NOT EXISTS questions (
-                                    id bigserial,
-                                    question_text varchar(200),
-                                    choices varchar (200),
-                                    num_choices varchar(10)
-                                    );"""
+                                );"""
 
 
-class dataBase:
+class DataBase:
 
     """This class is used to create and/or connect to a sqlite db and store the data"""
 
@@ -93,35 +78,6 @@ class dataBase:
         for essay in dict_data.get('essays'):
             self.__c.execute("""INSERT INTO profile_info (ok_id, type, category, title, content) VALUES
                                             (?, ?, ?, ?, ?);""",
-                             (dict_data.get('id'), 'essay', essay.get('category').lower(), essay.get('title'), essay.\
+                             (dict_data.get('id'), 'essay', essay.get('category').lower(), essay.get('title'), essay.
                               get('contents')))
         self.__connection.commit()
-
-    def save_question_type_to_db(self, question, answers):
-
-        str_answers = '|'.join(str(elem) for elem in answers)
-        self.__c.execute("""INSERT INTO questions (question_text, choices, num_choices) VALUES
-                                (?,?,?);""", (question, str_answers, len(answers)))
-        self.__connection.commit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

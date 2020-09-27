@@ -8,7 +8,7 @@ def main():
     from .webship import WebDrive
     from .ourdatabase import dataBase
 
-    okc_db = dataBase('okc_db')
+    okc_db = DataBase('okc_db')
     greeting = '''Welcome to the okcupid scraper interface.
 The goal of this script is to recover profile info of okcupid.com users.'''
     print(greeting)
