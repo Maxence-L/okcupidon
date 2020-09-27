@@ -1,2 +1,2 @@
-# OkCupid-scraper
- A python scraper for OkCpid
+# okcupidon
+ A python scraper for OkCupid
