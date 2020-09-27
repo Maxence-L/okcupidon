@@ -9,7 +9,7 @@ def main():
     from .ourdatabase import dataBase
 
     okc_db = dataBase('okc_db')
-    greeting = '''Welcome to the okcupid scraper interface. 
+    greeting = '''Welcome to the okcupid scraper interface.
 The goal of this script is to recover profile info of okcupid.com users.'''
     print(greeting)
 
@@ -21,7 +21,7 @@ The goal of this script is to recover profile info of okcupid.com users.'''
     n = int(input('Amount of scraped profiles (please enter a number) : '))
 
 
-    for i in range(0,n):
+    for _ in range(0,n):
         time.sleep(1)
         # Getting to the profile
         my_scrapper.get_to_full_profile()

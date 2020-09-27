@@ -33,10 +33,11 @@ create_database_script = """CREATE TABLE IF NOT EXISTS profile_id (
 
 
 class dataBase:
+
     """This class is used to create and/or connect to a sqlite db and store the data"""
 
     def __init__(self, filename):
-        """We initialise here the db so that it looks cleaner in other files"""
+        """We initialise here the db so that it looks cleaner in other files """
         if os.path.isfile(filename):
             print("A database with the same name as specified exists and will be used")
         else:
@@ -52,7 +53,7 @@ class dataBase:
 
     def __show_tables(self):
         """For test purposes"""
-        script = """SELECT 
+        script = """SELECT
                     name
                     FROM 
                         sqlite_master 
@@ -63,7 +64,7 @@ class dataBase:
         print(self.__c.fetchall())
 
     def save_profile_to_db(self, dict_data, decision):
-        """As named"""
+        """As named - takes in a formated dictionnary and a decision variable """
         # Log the profile to the profile_db in order to find it later
         self.__c.execute("""INSERT INTO profile_id (ok_id, accepted) VALUES
                                 (?,?);""", (dict_data.get('id'), decision))
@@ -80,7 +81,7 @@ class dataBase:
 
         # Then profile details
         details_types = ['basic', 'badge', 'pronoun', 'looks', 'background', 'lifestyle', 'family', 'wiw']
-        for detail in details_types :
+        for detail in details_types:
             if detail in dict_data.get('details').keys():
                 print(dict_data['details'][detail])
                 self.__c.execute("""INSERT INTO profile_info (ok_id, type, category, title, content) VALUES

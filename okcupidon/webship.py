@@ -6,17 +6,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import selenium.common.exceptions as selexcept
-# import requests
 import re
 import pickle
-import random
 import json
 from .dataparser import parse_profile
 
 class WebDrive:
 
-    # Initialize the webdriver, loading target url and the cookies
     def __init__(self, cookies=None):
+
+        """Initialize the webdriver, loading target url and the cookies. """
 
         def __start_webdriver():
             options = Options()
@@ -48,15 +47,18 @@ class WebDrive:
         self.website = 'https://www.okcupid.com'
 
     def log_to_ok_cupid(self):
+
         """This method is used to log to OK_Cupid.
+
         It searches first for cookies that may have been created before.
         If there are no cookies, it will pass the 2FA using __two_FA()
-        and then save the cookies for a quicker log-in later."""
+        and then save the cookies for a quicker log-in later. """
 
         def __two_fa(self, email=None, pwd=None):
+
             """This function is used in case where no cookies are provided or OKCupid asks nonetheless
             for a password and a 2FA"""
-            """Log to OKCupid with the id provided"""
+
             print("We'll log in manually to OKCupid, as no valid cookies were found")
             if email == None or pwd == None:
                 email = input("Please enter your profile email: ")
@@ -141,10 +143,11 @@ class WebDrive:
             self.driver.find_element_by_link_text('View Profile').click()
         except (selexcept.TimeoutException, selexcept.NoSuchElementException):
             self.driver.get(self.website+'/doubletake')
-            
+
     def acquire_data(self):
-        """The main profile scraper :
-        acquires all of the personnal data that is on the profile page
+        """The main profile scraper
+
+        Acquires all of the personal data that is on the profile page
         and returns it as a dict"""
 
         # Open the full essays
@@ -168,7 +171,7 @@ class WebDrive:
         return data
 
     def new_profile(self, decision):
-        """Brings the driver to a new profile"""
+        """Brings the driver to a new profile """
         WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.ID, "like-button")))
         if decision:
@@ -176,7 +179,7 @@ class WebDrive:
                 find_element_by_xpath('/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[2]').\
                 click()
             self.driver.get('https://www.okcupid.com/doubletake')
-        else :
+        else:
             self.driver.\
             find_element_by_xpath("/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[1]").\
             click()
