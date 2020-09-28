@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(
-    name='Okcupid-scrape',
+    name='okcupidon',
     version='0.0',
-    packages=['okcupid-scraper'],
-    url='https://github.com/Maxence-L/Okcupid-scrape',
+    packages=['okcupidon'],
+    url='https://github.com/Maxence-L/okcupidon',
     license='MIT',
     author='Maxence Laumonier',
     author_email='maxence@maxence.dev',
