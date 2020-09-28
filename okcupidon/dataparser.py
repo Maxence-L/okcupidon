@@ -1,11 +1,11 @@
 from bs4 import BeautifulSoup
 
+
 def parse_profile(profile_id, html_page):
 
-        """This function parses the html page, looking for profile data and returns a dict"""
+    """This function parses the html page, looking for profile data and returns a dict """
 
     soup = BeautifulSoup(html_page, "html.parser")
-
     data_structure = {
         'age': ['span', {'class': 'profile-basics-asl-age'}],
         'location': ['span', {'class': 'profile-basics-asl-location'}],
@@ -31,7 +31,6 @@ def parse_profile(profile_id, html_page):
                         'class': 'matchprofile-details-section matchprofile-details-section--wiw'}],
                     }
     }
-    print('ok')
     parsed_data = {}
 
     # Basic info - id

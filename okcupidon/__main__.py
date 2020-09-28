@@ -6,7 +6,7 @@ def main():
     import time
     import random
     from .webship import WebDrive
-    from .ourdatabase import dataBase
+    from .ourdatabase import DataBase
 
     okc_db = DataBase('okc_db')
     greeting = '''Welcome to the okcupid scraper interface.
