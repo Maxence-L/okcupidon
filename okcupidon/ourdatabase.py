@@ -68,7 +68,6 @@ class DataBase:
         details_types = ['basic', 'badge', 'pronoun', 'looks', 'background', 'lifestyle', 'family', 'wiw']
         for detail in details_types:
             if detail in dict_data.get('details').keys():
-                print(dict_data['details'][detail])
                 self.__c.execute("""INSERT INTO profile_info (ok_id, type, category, title, content) VALUES
                                                 (?, ?, ?, ?, ?);""",
                                 (dict_data.get('id'), 'detail', detail, 'NULL', dict_data['details'][detail]))
