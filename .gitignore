@@ -7,3 +7,4 @@ okc_db
 dist/
 *.egg-info
 build
+credentials.txt
