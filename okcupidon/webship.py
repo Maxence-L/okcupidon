@@ -161,7 +161,7 @@ class WebDrive:
         except (selexcept.NoSuchElementException, selexcept.TimeoutException):
             pass
 
-        Uncomment if you want to save to last profile's .html file (for debugging reasons)
+        #Uncomment if you want to save to last profile's .html file (for debugging reasons)
         with open('profile.html', 'w') as file:
              file.write(self.driver.page_source)
              file.close()

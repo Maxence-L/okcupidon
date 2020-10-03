@@ -55,9 +55,12 @@ def parse_profile(profile_id, html_page):
             data_structure['essays'].get('title')[0],
             data_structure['essays'].get('title')[1])[0].text
 
-        box_essay['contents'] = box.find_all(
-            data_structure['essays'].get('contents')[0],
-            data_structure['essays'].get('contents')[1])[0].text
+        try :
+            box_essay['contents'] = box.find_all(
+                data_structure['essays'].get('contents')[0],
+                data_structure['essays'].get('contents')[1])[0].text
+        except IndexError :
+            box_essay['contents'] = 'NaN'
 
         parsed_data['essays'].append(box_essay)
 
