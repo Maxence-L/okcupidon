@@ -9,7 +9,7 @@ import selenium.common.exceptions as selexcept
 import re
 import pickle
 import json
-from .dataparser import parse_profile
+from dataparser import parse_profile
 
 class WebDrive:
 
@@ -140,6 +140,7 @@ class WebDrive:
         try:
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'cardsummary')))
+            time.sleep(3)
             self.driver.find_element_by_link_text('View Profile').click()
         except (selexcept.TimeoutException, selexcept.NoSuchElementException):
             self.driver.get(self.website+'/doubletake')
@@ -155,18 +156,20 @@ class WebDrive:
             WebDriverWait(self.driver, 3).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span')))
+            time.sleep(3)
             self.driver.find_element_by_xpath('//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span').click()
         except (selexcept.NoSuchElementException, selexcept.TimeoutException):
             pass
 
-        # Uncomment if you want to save to last profile's .html file (for debugging reasons)
-        # with open('profile.html', 'w') as file:
-            # file.write(self.driver.page_source)
-            # file.close()
+        Uncomment if you want to save to last profile's .html file (for debugging reasons)
+        with open('profile.html', 'w') as file:
+             file.write(self.driver.page_source)
+             file.close()
 
         # Parse the profile
         profile_id = re.search('(?<=\/)(\d*?)(?=\?)', self.driver.current_url).group(0)
         data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
+        time.sleep(3)
 
         return data
 
@@ -174,6 +177,7 @@ class WebDrive:
         """Brings the driver to a new profile """
         WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.ID, "like-button")))
+        time.sleep(3)
         if decision:
             self.driver.\
                 find_element_by_xpath('/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[2]').\
@@ -183,3 +187,4 @@ class WebDrive:
             self.driver.\
             find_element_by_xpath("/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[1]").\
             click()
+
