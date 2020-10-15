@@ -24,13 +24,16 @@ class WebDrive:
 
         def __load_cookies():
             # Let's try to load user-provided cookies
-            if os.path.isfile('cookies.json'):
+            if cookies is not None and os.path.isfile(cookies):
                 try :
-                    with open('cookies.json', 'r') as ck :
+                    with open(cookies, 'r') as ck :
                         mein_cookies = json.load(ck)
+                        ck.close()
                     print('cookies.json was found')
                     return mein_cookies
+
                 except FileNotFoundError:
+                    print(f"We couldn't find the cookies at {cookies}")
                     pass
 
             # Let's see if we saved previous cookies before
@@ -43,10 +46,10 @@ class WebDrive:
                     pass
 
         self.driver = __start_webdriver()
-        self.cookies = __load_cookies()
+        self.user_cookies = __load_cookies()
         self.website = 'https://www.okcupid.com'
 
-    def log_to_ok_cupid(self):
+    def log_to_ok_cupid(self, id=None, pwd=None, save_cookies=False):
 
         """This method is used to log to OK_Cupid.
 
@@ -54,16 +57,14 @@ class WebDrive:
         If there are no cookies, it will pass the 2FA using __two_FA()
         and then save the cookies for a quicker log-in later. """
 
-        def __two_fa(self, email=None, pwd=None):
+        ##### Utils functions #####
+
+        def __two_fa_login(self, id=id, pwd=pwd, save_cookies=False):
 
             """This function is used in case where no cookies are provided or OKCupid asks nonetheless
             for a password and a 2FA"""
 
-            print("We'll log in manually to OKCupid, as no valid cookies were found")
-            if email == None or pwd == None:
-                email = input("Please enter your profile email: ")
-                pwd = input("Please enter your password: ")
-
+            print("You provided and email and a password which will be used for logging in")
             # login window access
             self.driver.get(self.website + "/login")
             try:
@@ -72,7 +73,7 @@ class WebDrive:
             finally:
                 pass
             # Passing the auth info
-            self.driver.find_element_by_name("username").send_keys(email)
+            self.driver.find_element_by_name("username").send_keys(id)
             self.driver.find_element_by_id('password').send_keys(pwd)
 
             # Proceed with the login
@@ -94,44 +95,57 @@ class WebDrive:
                         time.sleep(3)
                 except selexcept.NoSuchElementException:
                     pass
+
                 # Clicking on the "next" button
                 self.driver.find_element_by_class_name("login-actions-button").click()
 
-            if self.driver.current_url == 'https://www.okcupid.com/home':
+            saving_cookies = self.driver.current_url == 'https://www.okcupid.com/home' and save_cookies is True
+            if saving_cookies:
                 pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
                 print("Cookies were saved")
 
-        # login window access
-        self.driver.get(self.website + "/login")
-        try:
-            WebDriverWait(self.driver, 3).until(
-                EC.presence_of_element_located((By.ID, "username")))
-        finally:
-            pass
+        def __cookies_login(self):
 
-        # Loading cookies if present.
-        if self.cookies is not None:
-            self.driver.get(self.website)
-            for cookie in self.cookies:
-                self.driver.add_cookie(cookie)
-            print("Cookies were loaded")
+            # login window access
+            self.driver.get(self.website + "/login")
+            try:
+                WebDriverWait(self.driver, 3).until(
+                    EC.presence_of_element_located((By.ID, "username")))
+            finally:
+                pass
 
-        # Close the cookies warning in case it is still here
-        try:
-            self.driver.find_element_by_id('onetrust-accept-btn-handler').click()
-        except selexcept.NoSuchElementException:
-            pass
+            # Loading cookies if present.
+            if self.user_cookies is not None:
+                self.driver.get(self.website)
+                for cookie in self.user_cookies:
+                    self.driver.add_cookie(cookie)
+                print("Cookies were loaded")
 
-        # Try to get to the home interface
-        self.driver.get(self.website+'/home')
-        time.sleep(5)
+            # Close the cookies warning in case it is still here
+            try:
+                self.driver.find_element_by_id('onetrust-accept-btn-handler').click()
+            except selexcept.NoSuchElementException:
+                pass
 
-        # If this doesn't work (typically, cookies aren't that fresh), we log-in manually
-        cant_connect = self.cookies is None or self.driver.current_url != 'https://www.okcupid.com/home'
-        print(self.driver.current_url)
-        if cant_connect is True:
-            __two_fa(self)
-        time.sleep(5)
+            # Try to get to the home interface
+            self.driver.get(self.website + '/home')
+            time.sleep(5)
+
+            # If this doesn't work (typically, cookies aren't that fresh), we log-in manually
+            cant_connect = self.user_cookies is not None or self.driver.current_url != 'https://www.okcupid.com/home'
+            if cant_connect:
+                print("We couldn't connect using the provided cookies. Please try entering you id info (id, pwd")
+
+        ###### Function starts here #######
+
+        # If the user provided id info, this is the preferred login strategy
+        if (pwd is not None) and (id is not None):
+            __two_fa_login(id=id, pwd=pwd, save_cookies=save_cookies)
+
+        # Otherwise we look for saved cookies or user-provided cookies
+        else:
+            __cookies_login()
+
 
     def get_current_url(self):
         return self.driver.current_url
