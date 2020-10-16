@@ -11,6 +11,8 @@ import pickle
 import json
 from dataparser import parse_profile
 
+
+
 class WebDrive:
 
     def __init__(self, cookies=None):
@@ -18,9 +20,17 @@ class WebDrive:
         """Initialize the webdriver, loading target url and the cookies. """
 
         def __start_webdriver():
-            options = Options()
-            options.add_argument('window-size=1200x1000')
-            return webdriver.Chrome(chrome_options=options)
+
+            try:
+                options = Options()
+                options.add_argument('window-size=1200x1000')
+                return webdriver.Chrome(chrome_options=options)
+
+            except selexcept.SessionNotCreatedException:
+                from webdriver_manager.chrome import ChromeDriverManager
+                options = Options()
+                options.add_argument('window-size=1200x1000')
+                return webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 
         def __load_cookies():
             # Let's try to load user-provided cookies
@@ -48,6 +58,9 @@ class WebDrive:
         self.driver = __start_webdriver()
         self.user_cookies = __load_cookies()
         self.website = 'https://www.okcupid.com'
+
+    # End of __init__
+
 
     def log_to_ok_cupid(self, id=None, pwd=None, save_cookies=False):
 
@@ -144,8 +157,7 @@ class WebDrive:
 
         # Otherwise we look for saved cookies or user-provided cookies
         else:
-            __cookies_login()
-
+            __cookies_login(self)
 
     def get_current_url(self):
         return self.driver.current_url

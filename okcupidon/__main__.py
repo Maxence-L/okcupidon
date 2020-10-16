@@ -9,7 +9,7 @@ import os
 def main():
 
     # Parse config.ini
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(allow_no_value=True)
 
     pkg_root_path = os.path.dirname(__file__)
     config_path = os.path.join(pkg_root_path, 'config.ini')
@@ -49,7 +49,7 @@ def main():
                         help='If used, any other cl-args provided are not '
                              'saved to the config.ini file. This arg does '
                              'not require a value.')
-    parser.add_argument('-p', '--print-config',
+    parser.add_argument('--print-config',
                       action="store_true",
                       help='Print contents of config file.')
 
@@ -74,6 +74,7 @@ def main():
     okc_db = DataBase('okc_db')
 
     my_scrapper = WebDrive(cookies=args.cookies_file)
+
     my_scrapper.log_to_ok_cupid(id=args.id, pwd=args.pwd, save_cookies=args.store_cookies)
 
     for i in range(0,10):
