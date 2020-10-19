@@ -10,6 +10,7 @@ import re
 import pickle
 import json
 from dataparser import parse_profile
+import sys
 
 
 
@@ -34,12 +35,14 @@ class WebDrive:
 
         def __load_cookies():
             # Let's try to load user-provided cookies
+            cookies_found = False
             if cookies is not None and os.path.isfile(cookies):
                 try :
                     with open(cookies, 'r') as ck :
                         mein_cookies = json.load(ck)
                         ck.close()
                     print('cookies.json was found')
+                    cookies_found = True
                     return mein_cookies
 
                 except FileNotFoundError:
@@ -51,9 +54,15 @@ class WebDrive:
                 try:
                     mein_cookies = pickle.load(open("cookies.pkl", "rb"))
                     print('Cookies saved by pickle during preceding sessions were found')
+                    cookies_found = True
                     return mein_cookies
                 except EOFError:
+                    print("We can't load the cookies saved during preceding sessions")
                     pass
+
+            # If no usable cookies were found, we return a None value
+            if cookies_found == False:
+                return None
 
         self.driver = __start_webdriver()
         self.user_cookies = __load_cookies()
@@ -145,9 +154,11 @@ class WebDrive:
             time.sleep(5)
 
             # If this doesn't work (typically, cookies aren't that fresh), we log-in manually
-            cant_connect = self.user_cookies is not None or self.driver.current_url != 'https://www.okcupid.com/home'
+            cant_connect = (self.user_cookies is None) or \
+                           (self.driver.current_url != 'https://www.okcupid.com/home')
             if cant_connect:
-                print("We couldn't connect using the provided cookies. Please try entering you id info (id, pwd")
+                print("No usuable cookies were found. Please try entering you id info (id, pwd)")
+                sys.exit()
 
         ###### Function starts here #######
 
