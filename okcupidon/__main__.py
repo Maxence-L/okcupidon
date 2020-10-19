@@ -59,7 +59,7 @@ def main():
                              'successful.')
     parser.add_argument('--outfile',
                              default=config['global']['outfile'],
-                             dest='usernames_outfile',
+                             dest='outfile',
                              help='Name or absolute path of the sql file in which '
                                   'to store the collected usernames.')
 
@@ -70,15 +70,16 @@ def main():
     parser_run = subparsers.add_parser('run',
                                        help = 'Run the webscrapper.')
 
-    parser_run = subparsers.add_parser('--num-profiles',
-                              type=int,
-                              default=config['global']['num_profiles'],
-                              help='Integer specifying the number of profiles '
-                                   'to browse.')
+    parser_run.add_argument('--num-profiles',
+                            default=10,
+                            help='Integer specifying the number of profiles to browse.' 
+                            'Set by default to 10, for testing purposes',
+                            dest='num_profiles',
+                            type=int)
 
     # vars() because we need to be able to access the contents like obj[str]
     args_obj = vars(parser.parse_args())
-
+    print(args_obj)
     # We can now define global parameters
     cookies_file = args_obj['cookies_file']
     save_config = args_obj['save_config']
@@ -87,7 +88,6 @@ def main():
     id = args_obj['id']
     outfile = args_obj['outfile']
     max_query_attempts = args_obj['max_query_attempts']
-    num_profiles = args_obj['num_profiles']
 
     if save_config :
         __save_config(config, args_obj)
