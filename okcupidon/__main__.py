@@ -16,13 +16,9 @@ def main():
     print(config_path)
     config.read(config_path)
 
+    # We add parsable arguments for ease of use
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('--num-profiles',
-                              type=int,
-                              default=config['global']['num_profiles'],
-                              help='Integer specifying the number of profiles '
-                                   'to browse.')
+    subparsers = parser.add_subparsers(dest='subroutine')
 
     # Identification args
     parser.add_argument('-i', '--id',
@@ -32,6 +28,7 @@ def main():
                         default=config['global']['pwd'],
                         help = 'The password used to log in Okcupid')
     parser.add_argument('-c', '--cookies_file',
+                        default=config['global']['cookies_file'],
                         help = 'Name or absolute path to the .json file'
                                'containing the OKC cookies (credentials)'
                                'necessary to view user profiles.')
@@ -41,8 +38,8 @@ def main():
                                '- useful if you are logging for the first time'
                                'using id and pwd')
 
-    # Save config
-    parser.add_argument('--no-save-config',
+    # Args about config file
+    parser.add_argument("--no-save-config",
                         action='store_false',
                         default=True,
                         dest='save_config',
@@ -54,9 +51,6 @@ def main():
                       help='Print contents of config file.')
 
     # Utils args
-    parser.add_argument('--webdriver_path',
-                        help='Specify the path of the webdriver. Can be '
-                             'relative to the package root path or absolute.')
     parser.add_argument('--max-query-attempts',
                         type=int,
                         default=config['global']['max_query_attempts'],
@@ -69,33 +63,86 @@ def main():
                              help='Name or absolute path of the sql file in which '
                                   'to store the collected usernames.')
 
-    args = parser.parse_args()
+    # Actions
+    parser_print = subparsers.add_parser('print_config',
+                                        help = 'Print contents of config file.')
 
-    okc_db = DataBase('okc_db')
+    parser_run = subparsers.add_parser('run',
+                                       help = 'Run the webscrapper.')
 
-    my_scrapper = WebDrive(cookies=args.cookies_file)
+    parser_run = subparsers.add_parser('--num-profiles',
+                              type=int,
+                              default=config['global']['num_profiles'],
+                              help='Integer specifying the number of profiles '
+                                   'to browse.')
 
-    my_scrapper.log_to_ok_cupid(id=args.id, pwd=args.pwd, save_cookies=args.store_cookies)
+    # vars() because we need to be able to access the contents like obj[str]
+    args_obj = vars(parser.parse_args())
 
-    for i in range(0,10):
-        time.sleep(1)
-        # Getting to the profile
-        try:
-            my_scrapper.get_to_full_profile()
-            time.sleep(5)
-            # Acquiring data
-            decision = bool(random.randint(0, 1))
-            okc_db.save_profile_to_db(dict_data=my_scrapper.acquire_data(),
-                                      decision=decision)
+    # We can now define global parameters
+    cookies_file = args_obj['cookies_file']
+    save_config = args_obj['save_config']
+    store_cookies = args_obj['store_cookies']
+    pwd = args_obj['pwd']
+    id = args_obj['id']
+    outfile = args_obj['outfile']
+    max_query_attempts = args_obj['max_query_attempts']
+    num_profiles = args_obj['num_profiles']
+
+    if save_config :
+        __save_config(config, args_obj)
+
+    if args_obj['subroutine'] == 'print_config' :
+        print_config(config)
+
+    elif args_obj['subroutine'] == 'run':
+
+        #We set up the database
+        okc_db = DataBase(outfile)
+
+        # We start the scrapper
+        my_scrapper = WebDrive(cookies=cookies_file)
+        my_scrapper.log_to_ok_cupid(id=id, pwd=pwd, save_cookies=store_cookies)
+
+        for i in range(0,args_obj['num_profiles']):
             time.sleep(1)
-            # Next profile
-            my_scrapper.new_profile(decision=decision)
-            time.sleep(1)
-        except :
-            pass
-        print(i)
+            # Getting to the profile
+            try:
+                my_scrapper.get_to_full_profile()
+                time.sleep(5)
+                # Acquiring data
+                decision = bool(random.randint(0, 1))
+                okc_db.save_profile_to_db(dict_data=my_scrapper.acquire_data(),
+                                          decision=decision)
+                time.sleep(1)
+                # Next profile
+                my_scrapper.new_profile(decision=decision)
+                time.sleep(1)
+            except :
+                pass
+            print(i)
 
-    okc_db.close()
+        okc_db.close()
+
+# Save config
+def __save_config(config, args_obj) :
+    """Save the current configs in the .ini file.
+    """
+    for key in config['global'].keys():
+        if key in args_obj.keys():
+            config.set('global', key, str(args_obj[key]))
+
+    with open('config.ini', 'w') as f:
+        config.write(f)
+
+def print_config(config) :
+    """Print all parameters in the config.ini file in a readable format.
+    """
+    for section in config.sections():
+        print('[{}]'.format(section))
+        for key in config[section]:
+            print('{} = {}'.format(key, config[section][key]))
+        print('')
 
 if __name__ == '__main__':
     main()
