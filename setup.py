@@ -9,5 +9,5 @@ setup(
     author='Maxence Laumonier',
     author_email='maxence@maxence.dev',
     description='This package is designed to help you gather data automatically from users of okcupid.com.',
-    install_requires=["selenium", 'bs4']
+    install_requires=["selenium", 'bs4', 'webdriver_manager']
 )

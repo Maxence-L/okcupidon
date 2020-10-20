@@ -9,9 +9,9 @@ import selenium.common.exceptions as selexcept
 import re
 import pickle
 import json
-from dataparser import parse_profile
+from .dataparser import parse_profile
 import sys
-
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 class WebDrive:
@@ -81,7 +81,7 @@ class WebDrive:
 
         ##### Utils functions #####
 
-        def __two_fa_login(self, id=id, pwd=pwd, save_cookies=False):
+        def __two_fa_login(id, pwd, save_cookies=False):
 
             """This function is used in case where no cookies are provided or OKCupid asks nonetheless
             for a password and a 2FA"""
@@ -163,7 +163,7 @@ class WebDrive:
         ###### Function starts here #######
 
         # If the user provided id info, this is the preferred login strategy
-        if (pwd is not None) and (id is not None):
+        if (pwd != 'None') and (id != 'None'):
             __two_fa_login(id=id, pwd=pwd, save_cookies=save_cookies)
 
         # Otherwise we look for saved cookies or user-provided cookies

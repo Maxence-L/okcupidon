@@ -2,8 +2,8 @@ import configparser
 import argparse
 import time
 import random
-from webship import WebDrive
-from ourdatabase import DataBase
+from .webship import WebDrive
+from .ourdatabase import DataBase
 import os
 
 def main():
@@ -13,7 +13,6 @@ def main():
 
     pkg_root_path = os.path.dirname(__file__)
     config_path = os.path.join(pkg_root_path, 'config.ini')
-    print(config_path)
     config.read(config_path)
 
     # We add parsable arguments for ease of use
@@ -79,7 +78,7 @@ def main():
 
     # vars() because we need to be able to access the contents like obj[str]
     args_obj = vars(parser.parse_args())
-    print(args_obj)
+
     # We can now define global parameters
     cookies_file = args_obj['cookies_file']
     save_config = args_obj['save_config']
@@ -92,35 +91,52 @@ def main():
     if save_config :
         __save_config(config, args_obj)
 
+    #######
+    # routines :
+    #######
+
+    # Print config
     if args_obj['subroutine'] == 'print_config' :
         print_config(config)
 
+    # Run the scrapper
     elif args_obj['subroutine'] == 'run':
 
-        #We set up the database
+        # We set up the database
         okc_db = DataBase(outfile)
 
         # We start the scrapper
         my_scrapper = WebDrive(cookies=cookies_file)
+
+        # Logging to Okcupid
         my_scrapper.log_to_ok_cupid(id=id, pwd=pwd, save_cookies=store_cookies)
 
+        # Looping through all of the profiles
         for i in range(0,args_obj['num_profiles']):
             time.sleep(1)
-            # Getting to the profile
-            try:
-                my_scrapper.get_to_full_profile()
-                time.sleep(5)
-                # Acquiring data
-                decision = bool(random.randint(0, 1))
-                okc_db.save_profile_to_db(dict_data=my_scrapper.acquire_data(),
-                                          decision=decision)
-                time.sleep(1)
-                # Next profile
-                my_scrapper.new_profile(decision=decision)
-                time.sleep(1)
-            except :
-                pass
-            print(i)
+
+            # Setting a fuse in case of unsuccessful query
+            fuse = 0
+            for i in range(0, max_query_attempts):
+                # Getting to the profile
+                try:
+                    my_scrapper.get_to_full_profile()
+                    time.sleep(5)
+                    # Acquiring data
+                    decision = bool(random.randint(0, 1))
+                    okc_db.save_profile_to_db(dict_data=my_scrapper.acquire_data(),
+                                              decision=decision)
+                    time.sleep(1)
+                    # Next profile
+                    my_scrapper.new_profile(decision=decision)
+                    time.sleep(1)
+                    break
+                except :
+                    fuse +=1
+                    pass
+
+            if fuse == max_query_attempts:
+                break
 
         okc_db.close()
 
