@@ -11,9 +11,9 @@ def main():
     # Parse config.ini
     config = configparser.ConfigParser(allow_no_value=True)
 
-    pkg_root_path = os.path.dirname(__file__)
-    config_path = os.path.join(pkg_root_path, 'config.ini')
-    config.read(config_path)
+    config_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                   'config.ini')
+    config.read(config_filename)
 
     # We add parsable arguments for ease of use
     parser = argparse.ArgumentParser()
@@ -33,6 +33,7 @@ def main():
                                'necessary to view user profiles.')
     parser.add_argument('-s', '--store_cookies',
                         action='store_true',
+                        default=config['global']['store_cookies'],
                         help = 'Store session cookies as a .pkl file '
                                '- useful if you are logging for the first time'
                                'using id and pwd')
@@ -56,11 +57,19 @@ def main():
                         help='The number of attempts to make when requesting '
                              'a webpage, in case the first request is not '
                              'successful.')
+
     parser.add_argument('--outfile',
                              default=config['global']['outfile'],
                              dest='outfile',
                              help='Name or absolute path of the sql file in which '
                                   'to store the collected usernames.')
+
+    parser.add_argument('--num-profiles',
+                            default=config['global']['num_profiles'],
+                            help='Integer specifying the number of profiles to browse.' 
+                            'Set by default to 3, for testing purposes',
+                            dest='num_profiles',
+                            type=int)
 
     # Actions
     parser_print = subparsers.add_parser('print_config',
@@ -68,13 +77,6 @@ def main():
 
     parser_run = subparsers.add_parser('run',
                                        help = 'Run the webscrapper.')
-
-    parser_run.add_argument('--num-profiles',
-                            default=10,
-                            help='Integer specifying the number of profiles to browse.' 
-                            'Set by default to 10, for testing purposes',
-                            dest='num_profiles',
-                            type=int)
 
     # vars() because we need to be able to access the contents like obj[str]
     args_obj = vars(parser.parse_args())
@@ -87,6 +89,8 @@ def main():
     id = args_obj['id']
     outfile = args_obj['outfile']
     max_query_attempts = args_obj['max_query_attempts']
+    num_profiles = args_obj['num_profiles']
+
 
     if save_config :
         __save_config(config, args_obj)
@@ -112,7 +116,9 @@ def main():
         my_scrapper.log_to_ok_cupid(id=id, pwd=pwd, save_cookies=store_cookies)
 
         # Looping through all of the profiles
-        for i in range(0,args_obj['num_profiles']):
+
+        activity = 0
+        for i in range(0,num_profiles):
             time.sleep(1)
 
             # Setting a fuse in case of unsuccessful query
@@ -135,8 +141,11 @@ def main():
                     fuse +=1
                     pass
 
+            activity += 1
             if fuse == max_query_attempts:
+                print(f"Max query attempts reached on {my_scrapper.get_current_url} - stopping the scrapper.")
                 break
+        print(f"{activity} profiles were parsed")
 
         okc_db.close()
 
@@ -144,12 +153,16 @@ def main():
 def __save_config(config, args_obj) :
     """Save the current configs in the .ini file.
     """
+
+    config_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                   'config.ini')
     for key in config['global'].keys():
         if key in args_obj.keys():
             config.set('global', key, str(args_obj[key]))
 
-    with open('config.ini', 'w') as f:
+    with open(config_filename, 'w') as f:
         config.write(f)
+
 
 def print_config(config) :
     """Print all parameters in the config.ini file in a readable format.

@@ -9,5 +9,6 @@ setup(
     author='Maxence Laumonier',
     author_email='maxence@maxence.dev',
     description='This package is designed to help you gather data automatically from users of okcupid.com.',
-    install_requires=["selenium", 'bs4', 'webdriver_manager']
+    install_requires=["selenium", 'bs4', 'webdriver_manager', 'configparse'],
+    package_data={'okcupidon': ['config.ini',]},
 )

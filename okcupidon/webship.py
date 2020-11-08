@@ -120,8 +120,9 @@ class WebDrive:
 
                 # Clicking on the "next" button
                 self.driver.find_element_by_class_name("login-actions-button").click()
-
+                time.sleep(5)
             saving_cookies = self.driver.current_url == 'https://www.okcupid.com/home' and save_cookies is True
+
             if saving_cookies:
                 pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
                 print("Cookies were saved")
@@ -157,7 +158,7 @@ class WebDrive:
             cant_connect = (self.user_cookies is None) or \
                            (self.driver.current_url != 'https://www.okcupid.com/home')
             if cant_connect:
-                print("No usuable cookies were found. Please try entering you id info (id, pwd)")
+                print("No usuable cookies were found. Please try entering your id info (id, pwd)")
                 sys.exit()
 
         ###### Function starts here #######
@@ -199,9 +200,9 @@ class WebDrive:
             pass
 
         #Uncomment if you want to save to last profile's .html file (for debugging reasons)
-        with open('profile.html', 'w') as file:
-             file.write(self.driver.page_source)
-             file.close()
+        #with open('profile.html', 'w') as file:
+             #file.write(self.driver.page_source)
+             #file.close()
 
         # Parse the profile
         profile_id = re.search('(?<=\/)(\d*?)(?=\?)', self.driver.current_url).group(0)
