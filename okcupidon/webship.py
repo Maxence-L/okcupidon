@@ -199,11 +199,6 @@ class WebDrive:
         except (selexcept.NoSuchElementException, selexcept.TimeoutException):
             pass
 
-        #Uncomment if you want to save to last profile's .html file (for debugging reasons)
-        #with open('profile.html', 'w') as file:
-             #file.write(self.driver.page_source)
-             #file.close()
-
         # Parse the profile
         profile_id = re.search('(?<=\/)(\d*?)(?=\?)', self.driver.current_url).group(0)
         data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
@@ -226,3 +221,6 @@ class WebDrive:
             find_element_by_xpath("/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[1]").\
             click()
 
+    def take_screenshot(self):
+        """Takes a screenshot of the driver's current state"""
+        self.driver.get_screenshot_as_png('driver_screenshot.png')

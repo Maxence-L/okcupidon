@@ -24,7 +24,7 @@ class DataBase:
     def __init__(self, filename):
         """We initialise here the db so that it looks cleaner in other files """
         if os.path.isfile(filename):
-            print(f"A database was fond in {os.path.abspath(filename)}")
+            print(f"A database was found in {os.path.abspath(filename)}")
         else:
             print(f"A new database will be created in {os.path.abspath(filename)}")
             sqlite3.connect(filename).cursor()

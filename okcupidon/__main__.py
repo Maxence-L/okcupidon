@@ -5,6 +5,7 @@ import random
 from .webship import WebDrive
 from .ourdatabase import DataBase
 import os
+import traceback
 
 def main():
 
@@ -22,21 +23,21 @@ def main():
     # Identification args
     parser.add_argument('-i', '--id',
                         default=config['global']['id'],
-                        help = 'The email used to log in Okcupid')
+                        help = 'The email used to log in Okcupid \n')
     parser.add_argument('-p', '--pwd',
                         default=config['global']['pwd'],
-                        help = 'The password used to log in Okcupid')
+                        help = 'The password used to log in Okcupid \n')
     parser.add_argument('-c', '--cookies_file',
                         default=config['global']['cookies_file'],
                         help = 'Name or absolute path to the .json file'
                                'containing the OKC cookies (credentials)'
-                               'necessary to view user profiles.')
+                               'necessary to view user profiles. \n')
     parser.add_argument('-s', '--store_cookies',
                         action='store_true',
                         default=config['global']['store_cookies'],
                         help = 'Store session cookies as a .pkl file '
                                '- useful if you are logging for the first time'
-                               'using id and pwd')
+                               'using id and pwd \n')
 
     # Args about config file
     parser.add_argument("--no-save-config",
@@ -45,10 +46,10 @@ def main():
                         dest='save_config',
                         help='If used, any other cl-args provided are not '
                              'saved to the config.ini file. This arg does '
-                             'not require a value.')
+                             'not require a value. \n')
     parser.add_argument('--print-config',
                       action="store_true",
-                      help='Print contents of config file.')
+                      help='Print contents of config file. \n')
 
     # Utils args
     parser.add_argument('--max-query-attempts',
@@ -56,27 +57,37 @@ def main():
                         default=config['global']['max_query_attempts'],
                         help='The number of attempts to make when requesting '
                              'a webpage, in case the first request is not '
-                             'successful.')
+                             'successful. \n')
 
     parser.add_argument('--outfile',
                              default=config['global']['outfile'],
                              dest='outfile',
                              help='Name or absolute path of the sql file in which '
-                                  'to store the collected usernames.')
+                                  'to store the collected usernames. \n')
 
     parser.add_argument('--num-profiles',
                             default=config['global']['num_profiles'],
                             help='Integer specifying the number of profiles to browse.' 
-                            'Set by default to 3, for testing purposes',
+                            'Set by default to 3, for testing purposes \n',
                             dest='num_profiles',
                             type=int)
 
     # Actions
     parser_print = subparsers.add_parser('print_config',
-                                        help = 'Print contents of config file.')
+                                        help = 'Print contents of config file. \n')
 
     parser_run = subparsers.add_parser('run',
-                                       help = 'Run the webscrapper.')
+                                       help = 'Run the webscrapper. \n')
+    
+    parser_run.add_argument('-d, --debug_mode',
+                            action='store_true',
+                            default=False,
+                            dest='debug_mode',
+                            help='Activates debug mode in case the scrapper encounters problems :'
+                                 '- Takes a screenshot of the problematic webpage'
+                                 '- Saves the html of the problematic webpage'
+                                 '- Prints the error'
+                                 'All files are saved in the current directory \n')
 
     # vars() because we need to be able to access the contents like obj[str]
     args_obj = vars(parser.parse_args())
@@ -138,11 +149,16 @@ def main():
                     time.sleep(1)
                     break
                 except :
+                    traceback.print_exc(limit=1, chain=True)
                     fuse +=1
                     pass
 
             activity += 1
             if fuse == max_query_attempts:
+
+                if args_obj['debug_mode'] :
+                    debug(my_scrapper)
+
                 print(f"Max query attempts reached on {my_scrapper.get_current_url} - stopping the scrapper.")
                 break
         print(f"{activity} profiles were parsed")
@@ -172,6 +188,14 @@ def print_config(config) :
         for key in config[section]:
             print('{} = {}'.format(key, config[section][key]))
         print('')
+
+def debug(webdriver) :
+    webdriver.take_screenshot()
+    traceback.print_exc(limit=1, chain=True)
+
+    with open('profile.html', 'w') as file:
+        file.write(webdriver.page_source)
+        file.close()
 
 if __name__ == '__main__':
     main()
