@@ -129,14 +129,6 @@ class WebDrive:
 
         def __cookies_login(self):
 
-            # login window access
-            self.driver.get(self.website + "/login")
-            try:
-                WebDriverWait(self.driver, 3).until(
-                    EC.presence_of_element_located((By.ID, "username")))
-            finally:
-                pass
-
             # Loading cookies if present.
             if self.user_cookies is not None:
                 self.driver.get(self.website)
@@ -151,7 +143,7 @@ class WebDrive:
                 pass
 
             # Try to get to the home interface
-            self.driver.get(self.website + '/home')
+            self.driver.get('https://www.okcupid.com/home')
             time.sleep(5)
 
             # If this doesn't work (typically, cookies aren't that fresh), we log-in manually
@@ -159,17 +151,13 @@ class WebDrive:
                            (self.driver.current_url != 'https://www.okcupid.com/home')
             if cant_connect:
                 print("No usuable cookies were found. Please try entering your id info (id, pwd)")
-                sys.exit()
+
+                return cant_connect
 
         ###### Function starts here #######
 
-        # If the user provided id info, this is the preferred login strategy
-        if (pwd != 'None') and (id != 'None'):
-            __two_fa_login(id=id, pwd=pwd, save_cookies=save_cookies)
-
-        # Otherwise we look for saved cookies or user-provided cookies
-        else:
-            __cookies_login(self)
+        if __cookies_login(self) and ((pwd != 'None') and (id != 'None')) :
+           __two_fa_login(id=id, pwd=pwd, save_cookies=save_cookies)
 
     def get_current_url(self):
         return self.driver.current_url
@@ -200,7 +188,10 @@ class WebDrive:
             pass
 
         # Parse the profile
-        profile_id = re.search('(?<=\/)(\d*?)(?=\?)', self.driver.current_url).group(0)
+        profile_id = self.driver.current_url[32:51]
+        print(profile_id)
+        if profile_id is None :
+            print(self.driver.current_url)
         data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
         time.sleep(2)
 
@@ -221,6 +212,13 @@ class WebDrive:
             find_element_by_xpath("/html/body/div[1]/main/div[1]/div[2]/div/div/div[3]/span/div/button[1]").\
             click()
 
+    def debug(self):
+        self.take_screenshot()
+
+        with open('profile.html', 'w') as file:
+            file.write(self.driver.page_source)
+            file.close()
+
     def take_screenshot(self):
         """Takes a screenshot of the driver's current state"""
-        self.driver.get_screenshot_as_png('driver_screenshot.png')
+        self.driver.get_screenshot_as_file(('driver_screenshot.png'))

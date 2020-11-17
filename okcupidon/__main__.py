@@ -141,7 +141,10 @@ def main():
                     time.sleep(5)
                     # Acquiring data
                     decision = bool(random.randint(0, 1))
-                    okc_db.save_profile_to_db(dict_data=my_scrapper.acquire_data(),
+
+                    data = my_scrapper.acquire_data()
+
+                    okc_db.save_profile_to_db(dict_data=data,
                                               decision=decision)
                     time.sleep(1)
                     # Next profile
@@ -157,7 +160,8 @@ def main():
             if fuse == max_query_attempts:
 
                 if args_obj['debug_mode'] :
-                    debug(my_scrapper)
+                    my_scrapper.debug()
+                    traceback.print_exc(limit=1, chain=True)
 
                 print(f"Max query attempts reached on {my_scrapper.get_current_url} - stopping the scrapper.")
                 break
@@ -189,13 +193,7 @@ def print_config(config) :
             print('{} = {}'.format(key, config[section][key]))
         print('')
 
-def debug(webdriver) :
-    webdriver.take_screenshot()
-    traceback.print_exc(limit=1, chain=True)
 
-    with open('profile.html', 'w') as file:
-        file.write(webdriver.page_source)
-        file.close()
 
 if __name__ == '__main__':
     main()
