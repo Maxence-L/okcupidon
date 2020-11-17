@@ -33,7 +33,7 @@ def main():
                                'containing the OKC cookies (credentials)'
                                'necessary to view user profiles. \n')
     parser.add_argument('-s', '--store_cookies',
-                        action='store_true',
+                        action='store_false',
                         default=config['global']['store_cookies'],
                         help = 'Store session cookies as a .pkl file '
                                '- useful if you are logging for the first time'
@@ -157,6 +157,9 @@ def main():
                     pass
 
             activity += 1
+            if activity % 100 == 0 :
+                print(f"{activity} profiles were parsed")
+
             if fuse == max_query_attempts:
 
                 if args_obj['debug_mode'] :

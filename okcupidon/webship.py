@@ -71,7 +71,7 @@ class WebDrive:
     # End of __init__
 
 
-    def log_to_ok_cupid(self, id=None, pwd=None, save_cookies=False):
+    def log_to_ok_cupid(self, id=None, pwd=None, save_cookies=True):
 
         """This method is used to log to OK_Cupid.
 
@@ -81,7 +81,7 @@ class WebDrive:
 
         ##### Utils functions #####
 
-        def __two_fa_login(id, pwd, save_cookies=False):
+        def __two_fa_login(id, pwd, save_cookies=True):
 
             """This function is used in case where no cookies are provided or OKCupid asks nonetheless
             for a password and a 2FA"""
@@ -121,7 +121,11 @@ class WebDrive:
                 # Clicking on the "next" button
                 self.driver.find_element_by_class_name("login-actions-button").click()
                 time.sleep(5)
-            saving_cookies = self.driver.current_url == 'https://www.okcupid.com/home' and save_cookies is True
+            saving_cookies = self.driver.current_url == 'https://www.okcupid.com/home' and save_cookies
+            print(self.driver.current_url == 'https://www.okcupid.com/home')
+            print(saving_cookies)
+            print(save_cookies)
+            print(self.driver.current_url)
 
             if saving_cookies:
                 pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
@@ -189,7 +193,7 @@ class WebDrive:
 
         # Parse the profile
         profile_id = self.driver.current_url[32:51]
-        print(profile_id)
+
         if profile_id is None :
             print(self.driver.current_url)
         data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
