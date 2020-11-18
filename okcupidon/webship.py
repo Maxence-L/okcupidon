@@ -166,16 +166,16 @@ class WebDrive:
     def get_current_url(self):
         return self.driver.current_url
 
-    def get_to_full_profile(self):
+    def get_to_full_profile(self, wait_time=4):
         try:
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'cardsummary')))
-            time.sleep(2)
+            time.sleep(wait_time)
             self.driver.find_element_by_link_text('View Profile').click()
         except (selexcept.TimeoutException, selexcept.NoSuchElementException):
             self.driver.get(self.website+'/doubletake')
 
-    def acquire_data(self):
+    def acquire_data(self, wait_time=4):
         """The main profile scraper
 
         Acquires all of the personal data that is on the profile page
@@ -183,21 +183,26 @@ class WebDrive:
 
         # Open the full essays
         try:
-            WebDriverWait(self.driver, 3).until(
+            WebDriverWait(self.driver, wait_time).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span')))
-            time.sleep(2)
+            time.sleep(wait_time)
             self.driver.find_element_by_xpath('//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span').click()
         except (selexcept.NoSuchElementException, selexcept.TimeoutException):
             pass
 
         # Parse the profile
-        profile_id = self.driver.current_url[32:51]
+        try :
+            profile_id = self.driver.current_url[32:51]
+        except IndexError :
+            print(self.driver.current_url)
+            time.sleep(wait_time+4)
+            profile_id = self.driver.current_url[32:51]
 
         if profile_id is None :
             print(self.driver.current_url)
         data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
-        time.sleep(2)
+        time.sleep(wait_time)
 
         return data
 
@@ -218,11 +223,11 @@ class WebDrive:
 
     def debug(self):
         self.take_screenshot()
-
+        print(self.driver.current_url)
         with open('profile.html', 'w') as file:
             file.write(self.driver.page_source)
             file.close()
 
     def take_screenshot(self):
         """Takes a screenshot of the driver's current state"""
-        self.driver.get_screenshot_as_file(('driver_screenshot.png'))
+        self.driver.get_screenshot_as_file('driver_screenshot.png')

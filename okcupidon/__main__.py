@@ -137,12 +137,12 @@ def main():
             for i in range(0, max_query_attempts):
                 # Getting to the profile
                 try:
-                    my_scrapper.get_to_full_profile()
-                    time.sleep(5)
+                    my_scrapper.get_to_full_profile(wait_time=4+2*fuse)
+                    time.sleep(5+fuse)
                     # Acquiring data
                     decision = bool(random.randint(0, 1))
 
-                    data = my_scrapper.acquire_data()
+                    data = my_scrapper.acquire_data(wait_time=4+2*fuse)
 
                     okc_db.save_profile_to_db(dict_data=data,
                                               decision=decision)
@@ -154,13 +154,14 @@ def main():
                 except :
                     traceback.print_exc(limit=1, chain=True)
                     fuse +=1
+                    print(f"Error - {fuse}")
                     pass
 
             activity += 1
             if activity % 100 == 0 :
                 print(f"{activity} profiles were parsed")
 
-            if fuse == max_query_attempts:
+            if fuse == max_query_attempts :
 
                 if args_obj['debug_mode'] :
                     my_scrapper.debug()
