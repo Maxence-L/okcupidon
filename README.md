@@ -33,11 +33,11 @@ Okcupid and similar apps/websites have indeed become the primary way of finding 
 
 There is a lot to learn about how people present themselves in the online world, what they reflect on and so on. Hacking the process of finding a mate can be a part of it, as a [Chris McKinlay did few years ago](https://www.wired.com/2014/01/how-to-hack-okcupid/) (Using data science for finding a girlfriend ! Eternal respect !)
 
-Besides, Okcupid has been a great trove of data for aspiring Data Scientists looking for "real-world" datasets to analyse. A research paper was even wrote about it : [*OkCupid Data for Introductory Statistics and Data Science Courses*, Kim, Albert Y.; Escobedo-Land, Adriana,Journal of Statistics Education, v23 n2 2015](https://eric.ed.gov/?id=EJ1070114)
+Besides, Okcupid has been a great trove of data for aspiring Data Scientists looking for "real-world" datasets to analyse. A research paper was even written about it : [*OkCupid Data for Introductory Statistics and Data Science Courses*, Kim, Albert Y.; Escobedo-Land, Adriana,Journal of Statistics Education, v23 n2 2015](https://eric.ed.gov/?id=EJ1070114)
 
 ### Why not just release a dataset ?
 
-- The dataset will contain personnal information that have not been anonymised. As I used those sites before, I'm not sure I'd like to have my intros jokes recorded on the open web forever. **Please do not release the data you've gathered if you haven't aggregated the results before.**
+- The dataset will contain personnal information that have not been anonymised. As I used those sites before, I'm not sure I'd have liked to have my intros jokes recorded on the open web forever. **Please do not release the data you've gathered if you haven't aggregated the results before.**
 
 - Scraping it yourself gives you more flexibility for the kind of data you're looking for. For instance, currently, all "old" OkC datasets are about 'murica' but with this you can scrape the Old World or even Asia !
 
@@ -76,4 +76,81 @@ For this to work, you should have Python 3 installed on your computer. I'd advis
 - You can now install the package using `pip install \path\to\okcupidon-0.0.tar.gz`
 
 I should work. If it doesn't, please open a ticket and tell me !
+
+## How do I use this ?
+
+### Basics
+
+- You need to execute this package as a standalone program : `python -m okcupidon`
+
+- Help about the variables and the commands is available as such : `python -m okcupidon --help`
+
+```bash
+usage: __main__.py [-h] [-i ID] [-p PWD] [-c COOKIES_FILE] [-s]
+                   [--no-save-config] [--print-config]
+                   [--max-query-attempts MAX_QUERY_ATTEMPTS]
+                   [--outfile OUTFILE] [--num-profiles NUM_PROFILES]
+                   {print_config,run} ...
+
+positional arguments:
+  {print_config,run}
+    print_config        Print contents of config file.
+    run                 Run the webscrapper.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i ID, --id ID        The email used to log in Okcupid
+  -p PWD, --pwd PWD     The password used to log in Okcupid
+  -c COOKIES_FILE, --cookies_file COOKIES_FILE
+                        Name or absolute path to the .json filecontaining the
+                        OKC cookies (credentials)necessary to view user
+                        profiles.
+  -s, --store_cookies   Store session cookies as a .pkl file - useful if you
+                        are logging for the first timeusing id and pwd
+  --no-save-config      If used, any other cl-args provided are not saved to
+                        the config.ini file. This arg does not require a
+                        value.
+  --print-config        Print contents of config file.
+  --max-query-attempts MAX_QUERY_ATTEMPTS
+                        The number of attempts to make when requesting a
+                        webpage, in case the first request is not successful.
+  --outfile OUTFILE     Name or absolute path of the sql file in which to
+                        store the collected usernames.
+  --num-profiles NUM_PROFILES
+                        Integer specifying the number of profiles to
+                        browse.Set by default to 3, for testing purposes
+ ````
+ 
+### Configuration
+
+You should set an OkCupid profile by yourself. Phone numbers can be set for free with [Twilio](https://www.twilio.com/) - "testing" bonus is quite generous. Keep in mind that the parameters (ex: Man/woman, Sexuality, etc.) will influence which profiles you'll see. I'd advise to set it the widest possible. 
+
+Configuration file can be seen with the `print_config` command :
+
+`python -m okcupidon print_config`
+
+Configuration is set in CLI and is memorized by the package :
+
+- -i myemail@domain.com <- this is your mail
+- -p pa55word <- this is your password
+- --num-profiles <- How many profiles would you like to scrape, sir ?
+
+So we can configure the scrapper as such `python -m okcupidon -i myemail@example.com -p pa55word --num-profiles 10000`
+
+Options can also be set - check the help for more info.
+
+### Running
+
+Once your config is all set up, you can trigger the `run` command :  `python -m okcupidon run`
+
+Since Okcupid may ask you for 2-factor authentification (text-message) the first time. Once it's done, the scraper saves a cookie which will enable it to log seamlessly. You just need to wait for 5 seconds and see if the program asks you for the code that was sent to you. You can also provide a cookie file name with the `-c` option.
+
+### Output
+
+The package will output an SQLite database for you to use. It has two tables : 
+
+- profile_id - gathers all of the profile ids visited
+- profile_info - gathers every bit of info on profiles visited (exc. questions and photos) in a "long" format.
+
+The DB file is by default named `okc_db`. It will increment if you start again the scrapper (duplicates may appear however).
 
