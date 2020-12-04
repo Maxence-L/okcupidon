@@ -181,28 +181,34 @@ class WebDrive:
         Acquires all of the personal data that is on the profile page
         and returns it as a dict"""
 
-        # Open the full essays
-        try:
-            WebDriverWait(self.driver, wait_time).until(
+        def open_essays():
+            WebDriverWait(self.driver, wait_time*2).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span')))
             time.sleep(wait_time)
             self.driver.find_element_by_xpath('//*[@id="main_content"]/div[3]/div[1]/div[1]/div/button/span').click()
+
+        # Open the full essays
+        try:
+            open_essays()
         except (selexcept.NoSuchElementException, selexcept.TimeoutException):
-            pass
+                time.sleep(wait_time)
+                open_essays()
 
         # Parse the profile
         try :
+            time.sleep(wait_time)
             profile_id = self.driver.current_url[32:51]
+            data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
+
         except IndexError :
-            print(self.driver.current_url)
+            print("Index Error " + self.driver.current_url)
             time.sleep(wait_time+4)
             profile_id = self.driver.current_url[32:51]
 
-        if profile_id is None :
-            print(self.driver.current_url)
-        data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
-        time.sleep(wait_time)
+
+            data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
+            time.sleep(wait_time)
 
         return data
 
