@@ -75,7 +75,7 @@ For this to work, you should have Python 3 installed on your computer. I'd advis
 
 - You can now install the package using `pip install \path\to\okcupidon-0.0.tar.gz`
 
-I should work. If it doesn't, please open a ticket and tell me !
+It should work. If it doesn't, please open a ticket and tell me !
 
 ## How do I use this ?
 
