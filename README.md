@@ -77,14 +77,3 @@ For this to work, you should have Python 3 installed on your computer. I'd advis
 
 I should work. If it doesn't, please open a ticket and tell me !
 
-
-
-
-
-
-
-
-
-```bash
-git clone https://github.com/Maxence-L/okcupidon
-```
