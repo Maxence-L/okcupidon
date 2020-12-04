@@ -7,7 +7,7 @@ Since the last big UI update (2018 I guess), no working open-source Okcupid scra
 
 While this scraper is still in development and may be finicky to use, it works. It tends to break sometimes, as Okcupid is javascript-heavy and uses anti-scraping patterns, but you can in this case just relaunch it.
 
-# How can I participate ?
+## How can I participate ?
 
 Open an issue to share feedback or propose features. Star the repo if you like it! 🌟
 
