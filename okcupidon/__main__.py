@@ -84,6 +84,7 @@ def main():
                             default=False,
                             dest='debug_mode',
                             help='Activates debug mode in case the scrapper encounters problems :'
+                                 '- Prints in CLI the errors encountered'
                                  '- Takes a screenshot of the problematic webpage'
                                  '- Saves the html of the problematic webpage'
                                  '- Prints the error'
@@ -121,7 +122,7 @@ def main():
         okc_db = DataBase(outfile)
 
         # We start the scrapper
-        my_scrapper = WebDrive(cookies=cookies_file)
+        my_scrapper = WebDrive(cookies=cookies_file, verbose=args_obj['debug_mode'])
 
         # Logging to Okcupid
         my_scrapper.log_to_ok_cupid(id=id, pwd=pwd, save_cookies=store_cookies)
@@ -152,7 +153,9 @@ def main():
                     time.sleep(1)
                     break
                 except :
-                    traceback.print_exc(limit=1, chain=True)
+                    if args_obj['debug_mode'] :
+                        traceback.print_exc(limit=1, chain=True)
+                        
                     fuse +=1
                     print(f"Error - {fuse}")
                     pass

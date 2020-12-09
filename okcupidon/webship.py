@@ -16,7 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 class WebDrive:
 
-    def __init__(self, cookies=None):
+    def __init__(self, cookies=None, verbose=False):
 
         """Initialize the webdriver, loading target url and the cookies. """
 
@@ -64,6 +64,7 @@ class WebDrive:
             if cookies_found == False:
                 return None
 
+        self.verbose = verbose
         self.driver = __start_webdriver()
         self.user_cookies = __load_cookies()
         self.website = 'https://www.okcupid.com'
@@ -202,7 +203,8 @@ class WebDrive:
             data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
 
         except IndexError :
-            print("Index Error " + self.driver.current_url)
+            if self.verbose == True :
+                print("Index Error " + self.driver.current_url)
             time.sleep(wait_time+4)
             profile_id = self.driver.current_url[32:51]
 
