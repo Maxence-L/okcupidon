@@ -157,7 +157,8 @@ def main():
                         traceback.print_exc(limit=1, chain=True)
                         
                     fuse +=1
-                    print(f"Error - {fuse}")
+                    if args_obj['debug_mode']:
+                        print(f"Error - {fuse}")
                     pass
 
             activity += 1

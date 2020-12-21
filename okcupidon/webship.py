@@ -203,7 +203,7 @@ class WebDrive:
             data = parse_profile(profile_id=profile_id, html_page=self.driver.page_source)
 
         except IndexError :
-            if self.verbose == True :
+            if self.verbose :
                 print("Index Error " + self.driver.current_url)
             time.sleep(wait_time+4)
             profile_id = self.driver.current_url[32:51]
