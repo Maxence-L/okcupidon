@@ -37,7 +37,9 @@ Besides, Okcupid has been a great trove of data for aspiring Data Scientists loo
 
 ### Why not just release a dataset ?
 
-- The dataset will contain personal information that have not been anonymised. As I used those sites before, I'm not sure I'd have liked to have my intro jokes recorded on the open web forever. **Please do not release the data you've gathered if you haven't aggregated the results before.**s
+- The dataset will contain personal information that have not been anonymised. As I used those sites before, I'm not sure I'd have liked to have my intro jokes recorded on the open web forever. 
+
+# Please do not release the data you've gathered if you haven't aggregated the results before.
 
 - Scraping it yourself gives you more flexibility for the kind of data you're looking for. For instance, currently, all "old" OkC datasets are about 'murica' but with this you can scrape the Old World or even Asia !
 
