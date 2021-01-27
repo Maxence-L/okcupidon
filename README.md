@@ -137,7 +137,13 @@ Configuration is set in CLI and is memorized by the package :
 
 So we can configure the scrapper as such `python -m okcupidon -i myemail@example.com -p pa55word --num-profiles 10000`
 
-Options can also be set. Check the help for more info.
+Options can also be set. Check the help for more info. 
+
+From experience, I'd set a `--max-query-attempts` at 20 or above :
+
+`python -m okcupidon --max-query-attempts 20`
+
+You can get this way more than 1000 profiles per 'scrape round' of about 12 hours before the scraper gets in trouble.
 
 ### Running
 
