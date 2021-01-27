@@ -13,7 +13,7 @@ create_database_script = """CREATE TABLE IF NOT EXISTS profile_id (
                                     type varchar(30),
                                     category varchar(30),
                                     title varchar(200),
-                                    content varchar(7999)
+                                    content varchar(max)
                                 );"""
 
 
