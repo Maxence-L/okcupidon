@@ -1,7 +1,7 @@
 # okcupidon
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2aefdc3b25e24cbf902abaf1013f22ee)](https://www.codacy.com/manual/Maxence-L/okcupidon/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Maxence-L/okcupidon&amp;utm_campaign=Badge_Grade)
 
-A python scraper for Okcupid.
+A python command-line scrapper for Okcupid.
 
 Since the last big UI update (2018 I guess), no working open-source Okcupid scraper was available. Fear not ! Here it comes again !
 
