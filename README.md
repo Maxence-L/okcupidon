@@ -5,7 +5,9 @@ A python scraper for Okcupid.
 
 Since the last big UI update (2018 I guess), no working open-source Okcupid scraper was available. Fear not ! Here it comes again !
 
-While this scraper is still in development and may be finicky to use, it works. It tends to break, as Okcupid is javascript-heavy and uses anti-scraping patterns, but you can in this case just relaunch it.
+As Okcupid is javascript-heavy and uses anti-scraping patterns, the scrapper tends to be a little bit slow (around 3k profiles scraped per 24h). I'd recommend using it over a very good connection (> 5 MBps download, > 1 MBps upload) as a slow loading of the page tends to break it.
+
+Please note that altough it uses the pickle package, there is no .pkl file included. It's just for saving a loading your account's cookies in a simple and foolproof way.
 
 ## How can I participate ?
 
@@ -39,7 +41,7 @@ Besides, Okcupid has been a great trove of data for aspiring Data Scientists loo
 
 - The dataset will contain personal information that have not been anonymised. As I used those sites before, I'm not sure I'd have liked to have my intro jokes recorded on the open web forever. 
 
-# Please do not release the data you've gathered if you haven't aggregated the results before.
+**Please do not release the data you've gathered if you haven't aggregated the results before.**
 
 - Scraping it yourself gives you more flexibility for the kind of data you're looking for. For instance, currently, all "old" OkC datasets are about 'murica' but with this you can scrape the Old World or even Asia !
 
