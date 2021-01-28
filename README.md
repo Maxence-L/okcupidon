@@ -5,7 +5,7 @@ A python command-line scrapper for Okcupid.
 
 Since the last big UI update (2018 I guess), no working open-source Okcupid scraper was available. Fear not ! Here it comes again !
 
-As Okcupid is javascript-heavy and uses anti-scraping patterns, the scrapper tends to be a little bit slow (around 3k profiles scraped per 24h). I'd recommend using it over a very good connection (> 5 MBps download, > 1 MBps upload) as a slow loading of the page tends to break it.
+As Okcupid is javascript-heavy and uses anti-scraping patterns, the scrapper tends to be a little bit slow (around 3k profiles per 24h). I'd recommend using it over a very good connection (> 5 MBps download, > 1 MBps upload) as a slow loading of the page tends to break it.
 
 Please note that altough it uses the pickle package, there is no .pkl file included. It's just for saving a loading your account's cookies in a simple and foolproof way.
 
